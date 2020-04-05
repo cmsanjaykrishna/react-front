@@ -24,16 +24,31 @@ export class Signup extends Component {
             password
         };
         // console.log(user);
-        fetch("http://localhost:8080/signup", {
+        this.signup(user)
+        .then(data =>{
+            if(data.error) this.setState({error: data.error})
+                else this.setState({
+                    error: "",
+                    name: "",
+                    email: "",
+                    password: ""
+            })
+        })
+    }
+
+    signup = user => {
+        return fetch("http://localhost:8080/signup", {
             method: "POST",
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(user)
-        }).then(response => {
+        })
+        .then(response => {
             return response.json()
-        }).catch (err => console.log(err))
+        })
+        .catch (err => console.log(err))
     }
 
     render() {
