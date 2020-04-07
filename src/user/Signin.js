@@ -36,12 +36,9 @@ export class Signin extends Component {
         .then(data =>{
             if(data.error) this.setState({error: data.error})
                 else {
-                    //To-Do
-                    //authenticate
                     this.authenticate(data, () => {
                         this.setState({redirectToRenderer: true})
                     })
-                    //redirect
                 }
         })
     }
