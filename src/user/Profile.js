@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Redirect, Link } from "react-router-dom";
 import { isAuthenticated } from "../auth";
 import { read } from "./apiUser";
+import DefaultProfile from "../images/avatar.png";
 class Profile extends Component {
   constructor() {
     super();
@@ -37,8 +38,14 @@ class Profile extends Component {
         <div className="row">
           <div className="col-md-6">
             <h2 className="mt-5 mb-5">Profile</h2>
-            <p>Hello {isAuthenticated().user.name}</p>
-            <p>{isAuthenticated().user.email}</p>
+            <img
+              className="card-img-top"
+              src={DefaultProfile}
+              alt={user.name}
+              style={{ width: "50%", height: "50%", objectFit: "cover" }}
+            />
+            <p>{user.name}</p>
+            <p>{user.email}</p>
             <p>{`Joined ${new Date(user.created).toDateString()}`}</p>
           </div>
 
