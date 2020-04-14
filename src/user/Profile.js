@@ -29,7 +29,7 @@ class Profile extends Component {
     this.init(userId);
   }
 
-  componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props) {
     const userId = props.match.params.userId;
     this.init(userId);
   }
