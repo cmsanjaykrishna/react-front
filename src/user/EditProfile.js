@@ -12,6 +12,7 @@ class EditProfile extends Component {
       email: "",
       password: "",
       redirectToProfile: false,
+      error: "",
     };
   }
 
@@ -20,28 +21,47 @@ class EditProfile extends Component {
     this.init(userId);
   }
 
+  isvalid = () => {
+    const { name, email, password } = this.state;
+    if (name.length == 0) {
+      this.setState({ error: "Name is required" });
+      return false;
+    }
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      this.setState({ error: "Email is invalid" });
+      return false;
+    }
+    if (password.length >= 1 && password.length <= 5) {
+      this.setState({ error: "Paswword should be atleast 6 characters long" });
+      return false;
+    }
+    return true;
+  };
+
   handleChange = (name) => (event) => {
     this.setState({ [name]: event.target.value });
   };
 
   clickSubmit = (event) => {
     event.preventDefault();
-    const { name, email, password } = this.state;
-    const user = {
-      name,
-      email,
-      password: password || undefined,
-    };
-    // console.log(user);
-    const userId = this.props.match.params.userId;
-    const token = isAuthenticated().token;
-    update(userId, token, user).then((data) => {
-      if (data.error) this.setState({ error: data.error });
-      else
-        this.setState({
-          redirectToProfile: true,
-        });
-    });
+    if (this.isvalid()) {
+      const { name, email, password } = this.state;
+      const user = {
+        name,
+        email,
+        password: password || undefined,
+      };
+      // console.log(user);
+      const userId = this.props.match.params.userId;
+      const token = isAuthenticated().token;
+      update(userId, token, user).then((data) => {
+        if (data.error) this.setState({ error: data.error });
+        else
+          this.setState({
+            redirectToProfile: true,
+          });
+      });
+    }
   };
 
   editProfileForm = (name, email, password) => (
@@ -96,13 +116,19 @@ class EditProfile extends Component {
   };
 
   render() {
-    const { id, name, email, password, redirectToProfile } = this.state;
+    const { id, name, email, password, redirectToProfile, error } = this.state;
     if (redirectToProfile) {
       return <Redirect to={`/user/${id}`} />;
     }
     return (
       <div className="container">
         <h2 className="mt-5 mb-5">Edit Profile</h2>
+        <div
+          className="alert alert-danger"
+          style={{ display: error ? "" : "none" }}
+        >
+          {error}
+        </div>
         {this.editProfileForm(name, email, password)}
       </div>
     );
