@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, FormData } from "react";
 import { isAuthenticated } from "../auth";
 import { read, update } from "./apiUser";
 import { Redirect } from "react-router-dom";
@@ -17,13 +17,14 @@ class EditProfile extends Component {
   }
 
   componentDidMount() {
+    this.formData = new FormData();
     const userId = this.props.match.params.userId;
     this.init(userId);
   }
 
   isvalid = () => {
     const { name, email, password } = this.state;
-    if (name.length == 0) {
+    if (name.length === 0) {
       this.setState({ error: "Name is required" });
       return false;
     }
@@ -38,8 +39,10 @@ class EditProfile extends Component {
     return true;
   };
 
-  handleChange = (name) => (event) => {
-    this.setState({ [name]: event.target.value });
+  handleChange = (field) => (event) => {
+    const value = field ==='photo' ? event.target.files[0] : event.target.value ;
+    this.userData.set(field,value)
+    this.setState({ [field]: value });
   };
 
   clickSubmit = (event) => {
@@ -54,7 +57,7 @@ class EditProfile extends Component {
       // console.log(user);
       const userId = this.props.match.params.userId;
       const token = isAuthenticated().token;
-      update(userId, token, user).then((data) => {
+      update(userId, token, this.userData).then((data) => {
         if (data.error) this.setState({ error: data.error });
         else
           this.setState({
@@ -66,6 +69,15 @@ class EditProfile extends Component {
 
   editProfileForm = (name, email, password) => (
     <form>
+    <div className="form-group">
+        <label className="text-muted">Profile Photo</label>
+        <input
+          onChange={this.handleChange("photo")}
+          type="file"
+          accept="image/*"
+          className="form-control"
+        />
+      </div>
       <div className="form-group">
         <label className="text-muted">Name</label>
         <input
